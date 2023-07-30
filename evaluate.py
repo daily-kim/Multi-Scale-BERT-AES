@@ -166,3 +166,16 @@ def evaluation_low_score(true_score, pre_score, low_score):
 
     return low_score_recall, low_score_precision, low_score_f1
 
+import torch.nn.functional as F
+import torch
+
+def lossfunc(pred, target, alpha, beta, gamma):
+    # target_tensor = torch.tensor(target,dtype=torch.float32).cuda()
+    true = target.clone().detach().cuda()
+    mse = F.mse_loss(pred, true)
+    sim = 1 - F.cosine_similarity(pred.reshape(1,-1), true.reshape(1,-1))
+    margin_rank = F.margin_ranking_loss(pred, true, torch.ones(pred.shape[0]).cuda())
+
+    total_loss = alpha * mse + beta * sim + gamma * margin_rank
+
+    return total_loss

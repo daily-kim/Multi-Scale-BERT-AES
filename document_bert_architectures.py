@@ -4,16 +4,15 @@ from torch.nn import LSTM
 from transformers import BertPreTrainedModel, BertConfig, BertModel
 import torch.nn.functional as F
 
-
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_uniform(m.weight)
+        torch.nn.init.xavier_uniform_(m.weight)
         m.bias.data.fill_(7)
 
 
-class DocumentBertSentenceChunkAttentionLSTM(BertPreTrainedModel):
+class BERT_SEG(BertPreTrainedModel):
     def __init__(self, bert_model_config: BertConfig):
-        super(DocumentBertSentenceChunkAttentionLSTM, self).__init__(bert_model_config)
+        super(BERT_SEG, self).__init__(bert_model_config)
         self.bert = BertModel(bert_model_config)
         self.dropout = nn.Dropout(p=bert_model_config.hidden_dropout_prob)
         self.lstm = LSTM(bert_model_config.hidden_size,bert_model_config.hidden_size)
@@ -52,9 +51,9 @@ class DocumentBertSentenceChunkAttentionLSTM(BertPreTrainedModel):
         return prediction
 
 
-class DocumentBertCombineWordDocumentLinear(BertPreTrainedModel):
+class Bert_DOC_TOK(BertPreTrainedModel):
     def __init__(self, bert_model_config: BertConfig):
-        super(DocumentBertCombineWordDocumentLinear, self).__init__(bert_model_config)
+        super(Bert_DOC_TOK, self).__init__(bert_model_config)
         self.bert = BertModel(bert_model_config)
         self.bert_batch_size = 1
         self.dropout = nn.Dropout(p=bert_model_config.hidden_dropout_prob)
